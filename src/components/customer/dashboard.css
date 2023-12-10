@@ -1,0 +1,22 @@
+
+  
+  .header {
+    background-color: transparent;
+    color: #131312;
+  }
+  
+  .header h1 {
+    color: #131312;
+    font-size: 24px;
+  }
+  
+  .header p {
+    color: #131312;
+    font-size: 14px;
+  }
+  
+  .book-now-button {
+    background-color: #131312;
+    color: #f9f5f5;
+  }
+  

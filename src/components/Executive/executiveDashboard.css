@@ -1,0 +1,31 @@
+/* ExecutiveDashboard.css */
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.styled-button {
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.styled-button:hover {
+    background-color: #2980b9;
+}
+.custom-card:hover {
+    transform: scale(1.05); /* Increase the scale on hover for a zoom effect */
+    transition: transform 0.3s ease; /* Add a smooth transition effect */
+    box-shadow: 0 0 15px rgba(22, 22, 22, 0.1); /* Add a subtle box-shadow on hover */
+    cursor: pointer; /* Change cursor on hover for user feedback */
+}
