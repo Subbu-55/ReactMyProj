@@ -1,58 +1,67 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye,faEyeSlash, faEnvelope} from "@fortawesome/free-solid-svg-icons";
-import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
-import './login.css'; // Assuming you have a separate CSS file for styling
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import './login.css';
 
 function SignupComponent() {
-    const [name,setName] = useState('');
-    const [username,setUsername] = useState('');
-    const [city,setCity] = useState('');
-    const [email,setEmail] = useState(''); 
-    const [password,setPassword] = useState('');
-//   const [inputs, setInputs] = useState({
-//     name: "",
-//     city: "",
-//     email: "",
-//     username:"",
-//     password: "",
-//   });
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [city, setCity] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [Msg, setMsg] = useState("");
-  const [Loading, setLoading] = useState(false);
-  const [show, setShow] = useState(false);
   const navigate = useNavigate();
-  const [customer,setCustomer]= useState([]);
+  const [customer, setCustomer] = useState([]);
 
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const doSignUp=(e)=>{
-    e.preventDefault();
-    let customerObj={
-        "name":name,
-        "city":city,
-        "email":email,
-        "user":{
-           "username":username,
-           "password":password
-        }
-    }
-    //console.log(JSON.stringify(customerObj))
-    axios.post('http://localhost:8585/customer/add',customerObj)
-    .then(response=>{
-        setCustomer(response.data)
-        navigate('/user/login?msg=signup success')
-    })
-    .catch(function(error){
-        setMsg('Issue in processing sign up')
-    })
-}
+  const validateEmail = () => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  };
 
-  
+  const validatePassword = () => {
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  const doSignUp = (e) => {
+    e.preventDefault();
+
+    if (!validateEmail()) {
+      setMsg('Please enter a valid email address.');
+      return;
+    }
+
+    if (!validatePassword()) {
+      setMsg('Please enter a valid password.');
+      return;
+    }
+
+    let customerObj = {
+      "name": name,
+      "city": city,
+      "email": email,
+      "user": {
+        "username": username,
+        "password": password
+      }
+    };
+
+    axios.post('http://localhost:8585/customer/add', customerObj)
+      .then(response => {
+        setCustomer(response.data);
+        navigate('/user/login?msg=signup success');
+      })
+      .catch(function (error) {
+        setMsg('Issue in processing sign up');
+      });
+  };
 
   return (
     <>
@@ -85,7 +94,6 @@ function SignupComponent() {
                     placeholder="Full Name"
                     name="name"
                     required
-                    
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
@@ -94,8 +102,8 @@ function SignupComponent() {
                     type="text"
                     placeholder="City"
                     name="city"
-                    
-                    onChange={(e) => setCity(e.target.value)}                  />
+                    onChange={(e) => setCity(e.target.value)}
+                  />
                 </div>
                 <div className="input_text">
                   <input
@@ -110,18 +118,15 @@ function SignupComponent() {
                     type="text"
                     placeholder="UserName"
                     name="username"
-                    
                     onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
-                
                 <div className="input_text">
                   <div className="password-input">
                     <input
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter Password"
                       name="password"
-                     
                       onChange={(e) => setPassword(e.target.value)}
                     />
                     <span className="eye-icon" onClick={handleTogglePassword}>
@@ -134,14 +139,10 @@ function SignupComponent() {
                   </div>
                 </div>
                 <div className="btn">
-                  <button type="submit" >Sign up</button>
+                  <button type="submit">Sign up</button>
                 </div>
-                
               </form>
-              
-
-              
-              
+              {Msg && <div className="error-message">{Msg}</div>}
             </div>
           </div>
         </div>

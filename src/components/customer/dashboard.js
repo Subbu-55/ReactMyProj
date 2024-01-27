@@ -4,115 +4,64 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import InputGroup from "react-bootstrap/InputGroup";
 import NavigationBar from "../navbar";
-import {Card,CardBody, CardText,CardTitle, Nav,NavLink,ToggleButton,ToggleButtonGroup,} from "react-bootstrap";
+import { Card, Nav } from "react-bootstrap";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 function CustomerDashboard() {
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
   const [date, setDate] = useState("");
   const [busses, setBusses] = useState([]);
-  const [busses1, setBusses1] = useState([]);
-
-
   const [seatType, setSeatType] = useState("");
+  const [busesMessage, setBusesMessage] = useState("");
   const navigate = useNavigate();
-  const[customer,setCustomer]=useState({});
   const [busType, setBusType] = useState("");
-   const {cid}=useParams();
-  const [BusesMessage, setBusesMessage] = useState("");
-
-
-const handleBookTickets = (cid,busId) => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
-  
-  if (isLoggedIn) {
-    
-    navigate(`/ticketbooking/post/${cid}/${busId}`);
-  } else {
-    navigate("/user/login");
-  }
-};
-
+  const { cid } = useParams();
   const [loading, setLoading] = useState(false);
-  const cities = ["Delhi", "Mumbai", "Bangalore", "Chennai", "Hyderabad","Goa",""]; // Adding cities to be displayed in the dropdown
+  const cities = [
+    "Delhi",
+    "Mumbai",
+    "Bangalore",
+    "Chennai",
+    "Hyderabad",
+    "Goa",
+    "",
+  ];
   const animatedComponents = makeAnimated();
 
-  
+  const handleBookTickets = (cid, busId) => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-  // const filterBusses = async () => {
-  //   try {
-  //     console.log(seatType)
-  //     if(busType==="null"){
-  //       setLoading(true);
-  //       const response = await axios.get(
-  //         `http://localhost:8585/bus/getwithseatType?source=${source}&destination=${destination}&doj=${date}&seatType=${seatType}`
-  //         //localhost:8585/bus/getwithseatType?source=Hyderabad&destination=Chennai&doj=2023-12-10&seatType=SLEEPER
-  //       );
-  //       console.log('API response:', response);
-  //       setBusses(response.data || []);
-
-  //     }
-  //     else if(seatType==="null"){
-  //       setLoading(true);
-  //       const response = await axios.get(
-  //         `http://localhost:8585/bus/getwithbusType?source=${source}&destination=${destination}&doj=${date}&busType=${busType}`
-  //         //localhost:8585/bus/getwithseatType?source=Hyderabad&destination=Chennai&doj=2023-12-10&seatType=SLEEPER
-  //       );
-  //       console.log('API response:', response);
-  //       setBusses(response.data || []);
-
-  //     }
-  //     else{
-  //       setLoading(true);
-  //       const response = await axios.get(
-  //         `http://localhost:8585/bus/getwithbusseatType?source=${source}&destination=${destination}&doj=${date}&seatType=${seatType}&busType=${busType}`
-  //         //localhost:8585/bus/getwithseatType?source=Hyderabad&destination=Chennai&doj=2023-12-10&seatType=SLEEPER
-  //       );
-  //       console.log('API response:', response);
-  //       setBusses(response.data || []);
-  //     }
-
-  //   } catch (error) {
-  //     console.error('Error searching busses:', error);
-  //   } finally {
-  //     setLoading(false);
-
-  //      }
-  // }
-  // useEffect(() => {
-  // }, []); 
-    
-    // axios.get(`http://localhost:8585/customer/get/`+uid)
-    // .then(response=>setCustomer(response.data))
-    
-
-
+    if (isLoggedIn) {
+      navigate(`/ticketbooking/post/${cid}/${busId}`);
+    } else {
+      navigate("/user/login");
+    }
+  };
 
   const filterBusses = async () => {
     try {
       setLoading(true);
 
-      let endpoint = null;
+      let filterTypes = null;
+
       if (seatType && busType) {
-        // Both seatType and busType are selected
-        endpoint = `http://localhost:8585/bus/getwithbusseatType?source=${source}&destination=${destination}&doj=${date}&seatType=${seatType}&busType=${busType}`;
+        filterTypes = `http://localhost:8585/bus/getwithbusseatType?source=${source}&destination=${destination}&doj=${date}&seatType=${seatType}&busType=${busType}`;
       } else if (seatType) {
-        // Only seatType is selected
-        endpoint = `http://localhost:8585/bus/getwithseatType?source=${source}&destination=${destination}&doj=${date}&seatType=${seatType}`;
+        filterTypes = `http://localhost:8585/bus/getwithseatType?source=${source}&destination=${destination}&doj=${date}&seatType=${seatType}`;
       } else if (busType) {
-        // Only busType is selected
-        endpoint = `http://localhost:8585/bus/getwithbusType?source=${source}&destination=${destination}&doj=${date}&busType=${busType}`;
+        filterTypes = `http://localhost:8585/bus/getwithbusType?source=${source}&destination=${destination}&doj=${date}&busType=${busType}`;
+      } else {
+        filterTypes = `http://localhost:8585/bus/getbysdd/hi?source=${source}&destination=${destination}&doj=${date}`;
       }
 
-      const response = await axios.get(endpoint);
-      console.log("API response:", response);
+      const response = await axios.get(filterTypes);
       setBusses(response.data || []);
+
       if (response.data.length === 0) {
         setBusesMessage("No buses available with the selected filters.");
       } else {
@@ -130,11 +79,8 @@ const handleBookTickets = (cid,busId) => {
       setLoading(true);
       const response = await axios.get(
         `http://localhost:8585/bus/getbysdd/hi?source=${source}&destination=${destination}&doj=${date}`
-
       );
-      
 
-      console.log("API response:", response);
       setBusses(response.data || []);
     } catch (error) {
       console.error("Error searching busses:", error);
@@ -142,13 +88,13 @@ const handleBookTickets = (cid,busId) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
-    console.log(cid)
     filterBusses();
   }, [seatType, busType, source, destination, date]);
 
   return (
-    <div>
+    <div style={{ backgroundImage: "none" }}>
       <NavigationBar />
       <Container>
         <br />
@@ -163,42 +109,52 @@ const handleBookTickets = (cid,busId) => {
           }}
         >
           <Form>
-  <Row className="mb-3">
-    <Col>
-      <Form.Group>
-        <Form.Label>From</Form.Label>
-        <Select
-          components={animatedComponents}
-          isMulti={false}
-          options={cities.map((city) => ({ value: city, label: city }))}
-          onChange={(selectedOption) => setSource(selectedOption.value)}
-        />
-      </Form.Group>
-    </Col>
-    <Col>
-      <Form.Group>
-        <Form.Label>To</Form.Label>
-        <Select
-          components={animatedComponents}
-          isMulti={false}
-          options={cities.map((city) => ({ value: city, label: city }))}
-          onChange={(selectedOption) => setDestination(selectedOption.value)}
-        />
-      </Form.Group>
-    </Col>
-    <Col>
-      <Form.Group>
-        <Form.Label>Date</Form.Label>
-        <Form.Control
-          type="date"
-          name="date"
-          onChange={(e) => setDate(e.target.value)}
-          style={{ backgroundColor: "#eaeaea" }} // Changing background color
-        />
-      </Form.Group>
-    </Col>
-  </Row>
-</Form>
+            <Row className="mb-3">
+              <Col>
+                <Form.Group>
+                  <Form.Label>From</Form.Label>
+                  <Select
+                    components={animatedComponents}
+                    isMulti={false}
+                    options={cities.map((city) => ({
+                      value: city,
+                      label: city,
+                    }))}
+                    onChange={(selectedOption) =>
+                      setSource(selectedOption.value)
+                    }
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group>
+                  <Form.Label>To</Form.Label>
+                  <Select
+                    components={animatedComponents}
+                    isMulti={false}
+                    options={cities.map((city) => ({
+                      value: city,
+                      label: city,
+                    }))}
+                    onChange={(selectedOption) =>
+                      setDestination(selectedOption.value)
+                    }
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group>
+                  <Form.Label>Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="date"
+                    onChange={(e) => setDate(e.target.value)}
+                    style={{ backgroundColor: "#eaeaea" }}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+          </Form>
 
           <Button
             type="submit"
@@ -265,37 +221,6 @@ const handleBookTickets = (cid,busId) => {
                 </Card>
               </Col>
               <Col md={8}>
-                {busses1 &&
-                  busses1.length > 0 &&
-                  busses.map((b) => (
-                    <React.Fragment key={b.bus.id}>
-                      <Col md={12} style={{ marginBottom: "20px" }}>
-                        <Card
-                          style={{
-                            backgroundColor: "#dce0dd",
-                            boxShadow: "0 4px 8px 0 rgba(0,0,0,0.8)",
-                          }}
-                        >
-                          <Card.Body>
-                            <Card.Title>{b.busOperator.name}</Card.Title>
-                            <Card.Text>
-                              Seat Type: {b.bus.seatType}
-                              <br />
-                              Fare: {b.fare}
-                              <br />
-                              Date of Journey: {b.doj}
-                              <br />
-                              Time of Journey: {b.timeOfJourney}
-                              <br />
-                              No of Hours: {b.noOfHours}
-                              <br />
-                              Bus Type:{b.bus.busType}
-                            </Card.Text>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    </React.Fragment>
-                  ))}
                 <h5>Available Buses </h5>
 
                 {busses.map((b) => (
@@ -333,7 +258,7 @@ const handleBookTickets = (cid,busId) => {
                             <center>
                               <Button
                                 type="button"
-                                onClick={() => handleBookTickets(cid,b.bus.id)}
+                                onClick={() => handleBookTickets(cid, b.bus.id)}
                                 style={{ margin: 25 }}
                                 class="btn btn-outline-primary"
                               >
@@ -363,13 +288,12 @@ const handleBookTickets = (cid,busId) => {
             <marquee
               style={{
                 whiteSpace: "nowrap",
-                animation: "marquee 30s linear infinite", // Adjust the duration as needed
+                animation: "marquee 30s linear infinite",
               }}
             >
               Offers Closing Soon
             </marquee>
-          </div>{console.log(customer)}
-
+          </div>
           <div className="col-md-4">
             <div className="card">
               <Nav.Link as={Link} to="/busShedule/get-all">

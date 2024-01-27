@@ -56,7 +56,8 @@ function PreviousBookings() {
               </tr>
             ))}
           </tbody>
-        </Table><Pagination>
+        </Table>
+        <Pagination>
           <Pagination.First onClick={() => handlePageChange(1)} />
           <Pagination.Prev
             onClick={() => handlePageChange(currentPage - 1)}
@@ -64,21 +65,15 @@ function PreviousBookings() {
           />
           {[...Array(totalPages)].map((_, i) => (
             <Pagination.Item
-
-              
-key={i + 1}
+              key={i + 1}
               active={i + 1 === currentPage}
-
-              
-onClick={() => handlePageChange(i + 1)}
+              onClick={() => handlePageChange(i + 1)}
             >
               {i + 1}
             </Pagination.Item>
           ))}
           <Pagination.Next
-
-            
-onClick={() => handlePageChange(currentPage + 1)}
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           />
           <Pagination.Last onClick={() => handlePageChange(totalPages)} />

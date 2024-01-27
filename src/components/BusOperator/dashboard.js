@@ -116,10 +116,23 @@ function BusoperatorComponent(){
         const { name, value } = e.target;
         setUpdateFormData({ ...updateFormData, [name]: value });
       };
+
+      const backgroundImageUrl = 'https://st2.depositphotos.com/1041273/43175/v/450/depositphotos_431759732-stock-illustration-sightseeing-bus-emblem-on-white.jpg';
     
     return(
 
-       <div>
+      <div>
+      <style>{`
+        body {
+          background-image: url('${backgroundImageUrl}');
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          background-color: #f5f5f5;
+          color: #333;
+          font-family: 'Roboto, sans-serif';
+        }
+      `}</style>
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <div className="container-fluid">
           <Navbar.Brand href="#home">QuickBook</Navbar.Brand>

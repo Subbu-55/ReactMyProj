@@ -25,14 +25,14 @@ function NavigationBar() {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="#features">Home</Nav.Link>
+              <Nav.Link href="/customer/dashboard/:cid">Home</Nav.Link>
               <Nav.Link onClick={handleMyBookings}>My Bookings</Nav.Link>
               <NavDropdown title="About" id="collapsible-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">Contact</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">Email</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                <NavDropdown.Item href="/contact">Contact</NavDropdown.Item>
+                <NavDropdown.Item href="/email">Email</NavDropdown.Item>
+               
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+                
               </NavDropdown>
             </Nav>
             <Nav className="ms-auto">
@@ -54,7 +54,7 @@ function NavigationBar() {
           
           <div style={{ display: 'flex' }}>
              <Nav.Link as={Link} to="/user/login" className="thick-color" >Login</Nav.Link>&nbsp;&nbsp;
-             <Nav.Link as={Link} to="#signup" className="thick-color">Signup</Nav.Link>
+             <Nav.Link as={Link} to="/auth/signup" className="thick-color">Signup</Nav.Link>
           </div>
 
           }
