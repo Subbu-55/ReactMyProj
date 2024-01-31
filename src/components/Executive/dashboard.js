@@ -1,9 +1,22 @@
+
 import React, { useEffect, useState } from 'react';
 import './executiveDashboard.css';
-import { Card, Col, Nav, Navbar, Row, Table } from 'react-bootstrap';
+import { Card, Col, Navbar, Nav, Row, Table } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+
+const formStyle = {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: '20px',
+    borderRadius: '10px',
+    marginTop: '20px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+};
+
+const inputStyle = {
+    marginBottom: '15px',
+};
 
 function ExecutiveDashboard() {
     const [customers, setCustomers] = useState([]);
@@ -13,12 +26,13 @@ function ExecutiveDashboard() {
     const [isScheduleDataFetched, setIsScheduleDataFetched] = useState(false);
     const [isBusOperatorDataFetched, setIsBusOperatorDataFetched] = useState(false);
     const [showSignUpForm, setShowSignUpForm] = useState(false);
-    const {eid}=useParams();
+    const { eid } = useParams();
     const [newOperator, setNewOperator] = useState({
         name: '',
         city: '',
-        user: {username:'',password:''}
+        user: { username: '', password: '' },
     });
+
     const navigate = useNavigate();
 
     const fetchCustomers = async () => {
@@ -81,9 +95,13 @@ function ExecutiveDashboard() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
         setNewOperator((prevOperator) => ({
             ...prevOperator,
-            [name]: value,
+            user: {
+                ...prevOperator.user,
+                [name]: value,
+            },
         }));
     };
 
@@ -94,7 +112,6 @@ function ExecutiveDashboard() {
                 const response = await axios.post(`http://localhost:8585/busOperator/add/${eid}`, newOperator);
                 console.log('Bus Operator added successfully:', response.data);
                 setShowSignUpForm(false);
-                // Fetch updated data after adding a new operator
                 fetchBusOperators();
             } else {
                 console.error('executiveId is undefined');
@@ -104,31 +121,40 @@ function ExecutiveDashboard() {
             console.log('Error response:', error.response);
         }
     };
+
     useEffect(() => {
-        // Log the executiveId when the component mounts
         console.log('eid:', eid);
     }, [eid]);
-    const backgroundImageUrl = 'https://st2.depositphotos.com/1041273/43175/v/450/depositphotos_431759732-stock-illustration-sightseeing-bus-emblem-on-white.jpg';
 
+    const backgroundImageUrl = 'https://st2.depositphotos.com/1041273/43175/v/450/depositphotos_431759732-stock-illustration-sightseeing-bus-emblem-on-white.jpg';
 
     return (
         <div>
             <style>{`
-        body {
-          background-image: url('${backgroundImageUrl}');
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-attachment: fixed;
-          background-color: #f5f5f5;
-          color: #333;
-          font-family: 'Roboto, sans-serif';
-        }
-      `}</style>
+                body {
+                    background-image: url('${backgroundImageUrl}');
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-attachment: fixed;
+                    background-color: #f5f5f5;
+                    color: #333;
+                    font-family: 'Roboto, sans-serif';
+                }
+                .custom-card {
+                    // Your existing custom card styles here
+                }
+            `}</style>
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                 <div className="container-fluid">
                     <Navbar.Brand href="#home">QuickBook</Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
+                        <Nav>
+                            <Nav.Link onClick={handleAllCustomersClick}>Customers</Nav.Link>
+                            <Nav.Link onClick={handleAllSchedulesClick}>Schedules</Nav.Link>
+                            <Nav.Link onClick={handleAllBusOperatorsClick}>BusOperators</Nav.Link>
+                            <Nav.Link onClick={handleAddBusOperator}>AddBusOperator</Nav.Link>
+                        </Nav>
                         <Nav className="ms-auto">
                             {localStorage.getItem('isLoggedIn') ? (
                                 <React.Fragment>
@@ -159,22 +185,7 @@ function ExecutiveDashboard() {
                 </div>
             </Navbar>
             <h1>Welcome Executive</h1>
-            <div className="button-container">
-                <button className="styled-button" onClick={handleAllCustomersClick}>
-                    Customers
-                </button>
-                <button className="styled-button" onClick={handleAllSchedulesClick}>
-                    Schedules
-                </button>
-                <button className="styled-button" onClick={handleAllBusOperatorsClick}>
-                    BusOperators
-                </button>
-                <button className="styled-button" onClick={handleAddBusOperator}>
-                    AddBusOperator
-                </button>
-            </div>
 
-            {/* Display the fetched customers */}
             {isCustomerDataFetched && (
                 <div>
                     <br />
@@ -197,10 +208,11 @@ function ExecutiveDashboard() {
                             </Col>
                         ))}
                     </Row>
+
+
                 </div>
             )}
 
-            {/* Display the fetched schedules */}
             {isScheduleDataFetched && (
                 <div>
                     <br />
@@ -234,7 +246,6 @@ function ExecutiveDashboard() {
                 </div>
             )}
 
-            {/* Display the fetched bus operators */}
             {isBusOperatorDataFetched && (
                 <div>
                     <br />
@@ -257,77 +268,81 @@ function ExecutiveDashboard() {
                 </div>
             )}
 
-            {/* Display the signup form */}
-            {showSignUpForm && (
-                <div>
-                    <br />
-                    <h2>Add Bus Operator</h2>
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label htmlFor="operatorName" className="form-label">
-                                Name:
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="operatorName"
-                                name="name"
-                                value={newOperator.name}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="operatorCity" className="form-label">
-                                City:
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="operatorCity"
-                                name="city"
-                                value={newOperator.city}
-                                onChange={handleChange}
-                                required
-                            />
-                            </div>
-                             <div className="mb-3">
-                            <label htmlFor="operatorUserName" className="form-label">
-                                Username:
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="operatorUsername"
-                                name="username"
-                                value={newOperator.username}
-                                onChange={handleChange}
-                                required
-                            />
-                            </div>
-                             <div className="mb-3">
-                            <label htmlFor="operatorPassword" className="form-label">
-                                Password:
-                            </label>
-                            <input
-                                type="password"
-                                className="form-control"
-                                id="operatorPassword"
-                                name="password"
-                                value={newOperator.password}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <button type="submit" className="btn btn-primary">
-                            Add Operator
-                        </button>
-                    </form>
-                </div>
-            )}
+{showSignUpForm && (
+    <div>
+        <br />
+        <form className="your-form-class" onSubmit={handleSubmit}>
+            <h2 className="your-heading-class">Add Bus Operator</h2>
+            <br />
+            <div className="your-input-container-class">
+                <label htmlFor="operatorName" className="your-label-class">
+                    Name:
+                </label>
+                <input
+                    type="text"
+                    className="your-input-class"
+                    id="operatorName"
+                    name="name"
+                    placeholder="Enter operator name"
+                    value={newOperator.name}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <div className="your-input-container-class">
+                <label htmlFor="operatorCity" className="your-label-class">
+                    City:
+                </label>
+                <input
+                    type="text"
+                    className="your-input-class"
+                    id="operatorCity"
+                    name="city"
+                    placeholder="Enter city"
+                    value={newOperator.city}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <div className="your-input-container-class">
+                <label htmlFor="operatorUsername" className="your-label-class">
+                    Username:
+                </label>
+                <input
+                    type="text"
+                    className="your-input-class"
+                    id="operatorUsername"
+                    name="username"
+                    placeholder="Enter username"
+                    value={newOperator.user.username}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <div className="your-input-container-class">
+                <label htmlFor="operatorPassword" className="your-label-class">
+                    Password:
+                </label>
+                <input
+                    type="password"
+                    className="your-input-class"
+                    id="operatorPassword"
+                    name="password"
+                    placeholder="Enter password"
+                    value={newOperator.user.password}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <button type="submit" className="your-button-class">
+                Add Operator
+            </button>
+        </form>
+    </div>
+)}
+
         </div>
     );
 }
 
 export default ExecutiveDashboard;
-
